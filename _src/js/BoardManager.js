@@ -9,7 +9,7 @@
         self.LINE_NUMBER = 9;
         self.R = self.GRID_SIZE * 0.3;
 
-        self.unclikablePoses = [];
+        self.stonePoses = [];
 
         self.init();
     };
@@ -101,6 +101,11 @@
                     let stone = new window.myOthello.Stone(self.ctx, data);
                     stone.drawArc(data);
 
+                    self.stonePoses.push({
+                        instance: stone,
+                        pos: [Math.floor(posX / self.GRID_SIZE), Math.floor(posY / self.GRID_SIZE)]
+                    });
+
                     dir1 *= -1;
                     dir2 *= -1;
 
@@ -119,9 +124,16 @@
         putStone: function(clickedX, clickedY, color) {
             const self = this;
 
+            let nthGridX = Math.floor(clickedX / self.GRID_SIZE);
+            let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
+
+            if (self.checkVacancy([nthGridX, nthGridY]) > 0) {
+               return;
+            }
+
             let data = {
-                x: (self.GRID_SIZE * Math.floor(clickedX / self.GRID_SIZE)) + (self.GRID_SIZE / 2),
-                y: (self.GRID_SIZE * Math.floor(clickedY / self.GRID_SIZE)) + (self.GRID_SIZE / 2),
+                x: (self.GRID_SIZE * nthGridX) + (self.GRID_SIZE / 2),
+                y: (self.GRID_SIZE * nthGridY) + (self.GRID_SIZE / 2),
                 r: self.R,
                 color: color
             };
@@ -129,9 +141,23 @@
             let stone = new window.myOthello.Stone(self.ctx, data);
             stone.drawArc(data);
 
-            // console.log(Math.floor(clickedX / self.GRID_SIZE), Math.floor(clickedY / self.GRID_SIZE));
+            self.stonePoses.push({
+                instance: stone,
+                pos: [nthGridX, nthGridY]
+            });
 
         },
+
+        checkVacancy: function(pos) {
+            const self = this;
+
+            let result = self.stonePoses.filter(function(val) {
+                return val.pos[0] === pos[0] && val.pos[1] === pos[1];
+            });
+
+            return result.length;
+
+        }
 
     };
 
