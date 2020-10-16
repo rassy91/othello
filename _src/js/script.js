@@ -22,11 +22,8 @@
 
         canvas.addEventListener('click', function(e) {
 
-            isWhite *= -1;
-            color = isWhite > 0 ? '#ffffff' : '#000000';
-
             // console.log(board.getPosOnBoard(e.offsetX, e.offsetY));
-            board.putStone(e.offsetX, e.offsetY, color);
+            board.putStone(e.offsetX, e.offsetY);
         });
 
 

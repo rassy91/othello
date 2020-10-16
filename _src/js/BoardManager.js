@@ -9,6 +9,9 @@
         self.LINE_NUMBER = 9;
         self.R = self.GRID_SIZE * 0.3;
 
+        self.color = '#ffffff';
+        self.isWhite = 1;
+
         self.stonePoses = [];
 
         self.init();
@@ -121,13 +124,13 @@
 
         },
 
-        putStone: function(clickedX, clickedY, color) {
+        putStone: function(clickedX, clickedY) {
             const self = this;
 
             let nthGridX = Math.floor(clickedX / self.GRID_SIZE);
             let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
 
-            if (self.checkVacancy([nthGridX, nthGridY]) > 0) {
+            if (self.checkVacancy(nthGridX, nthGridY) > 0) {
                return;
             }
 
@@ -148,11 +151,11 @@
 
         },
 
-        checkVacancy: function(pos) {
+        checkVacancy: function(nthX, nthY) {
             const self = this;
 
             let result = self.stonePoses.filter(function(val) {
-                return val.pos[0] === pos[0] && val.pos[1] === pos[1];
+                return val.pos[0] === nthX && val.pos[1] === nthY;
             });
 
             return result.length;
