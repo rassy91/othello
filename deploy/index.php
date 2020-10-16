@@ -9,7 +9,7 @@
 </head>
 <body class="othello">
 
-<div class="wrapper">
+<div id="wrapper" class="wrapper">
     <canvas id="canvas" class="canvas"></canvas>
 </div>
 
