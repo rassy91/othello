@@ -9,7 +9,9 @@
 </head>
 <body class="othello">
 
-
+<div class="wrapper">
+    <canvas id="canvas" class="canvas"></canvas>
+</div>
 
 <script src="./js/app.js?v=<?php echo time(); ?>"></script>
 </body>

@@ -1,0 +1,11 @@
+.#{$pageName} {
+    .wrapper {
+        margin-top: 100px;
+    }
+    .canvas {
+        display: block;
+        width: 800px;
+        height: 800px;
+        margin: auto;
+    }
+}
