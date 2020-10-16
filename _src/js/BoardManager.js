@@ -133,6 +133,12 @@
             if (self.checkVacancy(nthGridX, nthGridY) > 0) {
                return;
             }
+            if (!self.checkNeighbor(nthGridX, nthGridY)) {
+               return;
+            }
+
+            self.isWhite *= -1;
+            color = self.isWhite > 0 ? '#ffffff' : '#000000';
 
             let data = {
                 x: (self.GRID_SIZE * nthGridX) + (self.GRID_SIZE / 2),
@@ -159,6 +165,38 @@
             });
 
             return result.length;
+
+        },
+
+        checkNeighbor: function(nthX, nthY) {
+            const self = this;
+
+            let hasNeighbor = false;
+
+            let neighbors = [
+                [nthX - 1, nthY],       // 左
+                [nthX - 1, nthY + 1],   // 左上
+                [nthX, nthY + 1],       // 上
+                [nthX + 1, nthY + 1],   // 右上
+                [nthX + 1, nthY],       // 右
+                [nthX + 1, nthY - 1],   // 右下
+                [nthX, nthY - 1],       // 下
+                [nthX - 1, nthY - 1]    // 左下
+            ];
+
+            for (let i = 0, length = self.stonePoses.length; i < length; i++) {
+                for (let j = 0, len = neighbors.length; j < len; j++) {
+                    if (self.stonePoses[i].pos[0] === neighbors[j][0] && self.stonePoses[i].pos[1] === neighbors[j][1]) {
+                        hasNeighbor = true;
+                        break;
+                    }
+                }
+                if (hasNeighbor) {
+                    break;
+                }
+            }
+
+            return hasNeighbor;
 
         }
 
