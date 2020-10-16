@@ -114,7 +114,24 @@
 
             return [Math.floor(clickedX / self.GRID_SIZE), Math.floor(clickedY / self.GRID_SIZE)];
 
-        }
+        },
+
+        putStone: function(clickedX, clickedY, color) {
+            const self = this;
+
+            let data = {
+                x: (self.GRID_SIZE * Math.floor(clickedX / self.GRID_SIZE)) + (self.GRID_SIZE / 2),
+                y: (self.GRID_SIZE * Math.floor(clickedY / self.GRID_SIZE)) + (self.GRID_SIZE / 2),
+                r: self.R,
+                color: color
+            };
+
+            let stone = new window.myOthello.Stone(self.ctx, data);
+            stone.drawArc(data);
+
+            // console.log(Math.floor(clickedX / self.GRID_SIZE), Math.floor(clickedY / self.GRID_SIZE));
+
+        },
 
     };
 

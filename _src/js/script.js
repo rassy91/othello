@@ -13,9 +13,21 @@
         ctx.canvas.width = wrapper.clientWidth;
         ctx.canvas.height = wrapper.clientHeight;
 
+        let color = '#ffffff';
+        let isWhite = 1;
+
         const board = new myOthello.BoardManager(ctx);
 
         board.startGame();
+
+        canvas.addEventListener('click', function(e) {
+
+            isWhite *= -1;
+            color = isWhite > 0 ? '#ffffff' : '#000000';
+
+            // console.log(board.getPosOnBoard(e.offsetX, e.offsetY));
+            board.putStone(e.offsetX, e.offsetY, color);
+        });
 
 
         // フィールドを書く（8x8）
