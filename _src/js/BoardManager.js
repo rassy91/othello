@@ -5,6 +5,12 @@
 
         self.ctx = ctx;
 
+        self.GRID_SIZE = 50;
+        self.LINE_NUMBER = 9;
+        self.R = self.GRID_SIZE * 0.3;
+
+        self.unclikablePoses = [];
+
         self.init();
     };
 
@@ -26,22 +32,20 @@
         drawBoard: function() {
             const self = this;
 
-            const GRID_SIZE = 50;
-            const LINE_NUMBER = 9;
-            const fieldSize = GRID_SIZE * (LINE_NUMBER - 1);
+            const fieldSize = self.GRID_SIZE * (self.LINE_NUMBER - 1);
 
             let x = 0;
             let y = 0;
 
             self.drawRect(x, y, fieldSize, fieldSize, '#008833');
 
-            for (let i = 1; i <= LINE_NUMBER; i++) {
+            for (let i = 1; i <= self.LINE_NUMBER; i++) {
                 self.drawLine(x, 0, x, fieldSize);
-                x += GRID_SIZE;
+                x += self.GRID_SIZE;
             }
-            for (let i = 1; i <= LINE_NUMBER; i++) {
+            for (let i = 1; i <= self.LINE_NUMBER; i++) {
                 self.drawLine(0, y, fieldSize, y);
-                y += GRID_SIZE;
+                y += self.GRID_SIZE;
             }
 
         },
@@ -68,6 +72,49 @@
             self.ctx.stroke();
 
         },
+
+        startGame: function() {
+            const self = this;
+
+            const center = self.GRID_SIZE * ((self.LINE_NUMBER - 1) / 2);
+            const diff = (self.GRID_SIZE / 2);
+            let dir1 = -1;
+            let dir2 = -1;
+            let posX, posY;
+            let data = {
+                r: self.R
+            };
+
+            setFirstStone('#ffffff');
+            dir1 *= -1;
+            setFirstStone('#000000');
+
+            function setFirstStone(color) {
+                for (let i = 0; i < 2; i++) {
+                    posX = center + dir1 * diff;
+                    posY = center + dir2 * diff;
+
+                    data.x = posX;
+                    data.y = posY;
+                    data.color = color;
+
+                    let stone = new window.myOthello.Stone(self.ctx, data);
+                    stone.drawArc(data);
+
+                    dir1 *= -1;
+                    dir2 *= -1;
+
+                }
+            }
+
+        },
+
+        getPosOnBoard: function(clickedX, clickedY) {
+            const self = this;
+
+            return [Math.floor(clickedX / self.GRID_SIZE), Math.floor(clickedY / self.GRID_SIZE)];
+
+        }
 
     };
 

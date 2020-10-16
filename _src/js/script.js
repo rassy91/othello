@@ -15,6 +15,8 @@
 
         const board = new myOthello.BoardManager(ctx);
 
+        board.startGame();
+
 
         // フィールドを書く（8x8）
         // 各マス目のエリア情報を保持（startX, startY, endX, endY）
