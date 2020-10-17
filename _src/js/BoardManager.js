@@ -12,7 +12,7 @@
         self.color = '#ffffff';
         self.isWhite = 1;
 
-        self.stonePoses = [];
+        self.board = [];
 
         self.init();
     };
@@ -29,6 +29,16 @@
             self.ctx.translate(1, 1);
 
             self.drawBoard();
+
+            for (let i = 1; i < self.LINE_NUMBER; i++) {
+                let row = [];
+
+                for (let j = 1; j < self.LINE_NUMBER; j++) {
+                    row.push({});
+                }
+
+                self.board.push(row);
+            }
 
         },
 
@@ -106,11 +116,9 @@
                     let stone = new window.myOthello.Stone(self.ctx, data);
                     stone.drawArc(data);
 
-                    self.stonePoses.push({
-                        instance: stone,
-                        isWhite: isWhite,
-                        pos: [Math.ceil(posX / self.GRID_SIZE), Math.ceil(posY / self.GRID_SIZE)]
-                    });
+                    let obj = self.board[Math.floor(posY / self.GRID_SIZE)][Math.floor(posX / self.GRID_SIZE)];
+                    obj.instance = stone;
+                    obj.isWhite = isWhite;
 
                     dir1 *= -1;
                     dir2 *= -1;
@@ -118,13 +126,15 @@
                 }
             }
 
+            console.log(self.board);
+
         },
 
         putStone: function(clickedX, clickedY) {
             const self = this;
 
-            let nthGridX = Math.ceil(clickedX / self.GRID_SIZE);
-            let nthGridY = Math.ceil(clickedY / self.GRID_SIZE);
+            let nthGridX = Math.floor(clickedX / self.GRID_SIZE);
+            let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
 
             if (self.checkVacancy(nthGridX, nthGridY) > 0) {
                return;
@@ -140,8 +150,8 @@
             color = self.isWhite > 0 ? '#ffffff' : '#000000';
 
             let data = {
-                x: (self.GRID_SIZE * nthGridX) - (self.GRID_SIZE / 2),
-                y: (self.GRID_SIZE * nthGridY) - (self.GRID_SIZE / 2),
+                x: (self.GRID_SIZE * nthGridX) + (self.GRID_SIZE / 2),
+                y: (self.GRID_SIZE * nthGridY) + (self.GRID_SIZE / 2),
                 r: self.R,
                 color: color
             };
