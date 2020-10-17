@@ -125,10 +125,8 @@
 
                 }
             }
-
-            console.log(self.board);
-
         },
+
 
         putStone: function(clickedX, clickedY) {
             const self = this;
@@ -136,9 +134,9 @@
             let nthGridX = Math.floor(clickedX / self.GRID_SIZE);
             let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
 
-            // if (self.checkVacancy(nthGridX, nthGridY) > 0) {
-            //    return;
-            // }
+            if (!self.checkVacancy(nthGridX, nthGridY)) {
+                return;
+            }
             // if (!self.checkNeighbor(nthGridX, nthGridY)) {
             //    return;
             // }
@@ -168,11 +166,7 @@
         checkVacancy: function(nthX, nthY) {
             const self = this;
 
-            let result = self.stonePoses.filter(function(val) {
-                return val.pos[0] === nthX && val.pos[1] === nthY;
-            });
-
-            return result.length;
+            return Object.keys(self.board[nthY][nthX]).length <= 0;
 
         },
 
