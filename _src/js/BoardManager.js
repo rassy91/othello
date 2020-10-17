@@ -137,9 +137,9 @@
             if (!self.checkVacancy(nthGridX, nthGridY)) {
                 return;
             }
-            // if (!self.checkNeighbor(nthGridX, nthGridY)) {
-            //    return;
-            // }
+            if (!self.checkNeighbor(nthGridX, nthGridY)) {
+                return;
+            }
             // if (!self.checkAvailability(nthGridX, nthGridY)) {
             //    // return;
             // }
@@ -173,7 +173,7 @@
         checkNeighbor: function(nthX, nthY) {
             const self = this;
 
-            let hasNeighbor = false;
+            let row, line;
 
             let neighbors = [
                 [nthX, nthY + 1],       // 上
@@ -186,19 +186,20 @@
                 [nthX - 1, nthY + 1]    // 左上
             ];
 
-            for (let i = 0, length = self.stonePoses.length; i < length; i++) {
-                for (let j = 0, len = neighbors.length; j < len; j++) {
-                    if (self.stonePoses[i].pos[0] === neighbors[j][0] && self.stonePoses[i].pos[1] === neighbors[j][1]) {
-                        hasNeighbor = true;
-                        break;
-                    }
+            for (let i = 0, len = neighbors.length; i < len; i++) {
+
+                line = neighbors[i][1];
+                row = neighbors[i][0];
+
+                if (line < 0 || line > 7 || row < 0 || row > 7) {
+                    continue;
                 }
-                if (hasNeighbor) {
-                    break;
+
+                if (Object.keys(self.board[line][row]).length > 0) {
+                    return true;
                 }
             }
 
-            return hasNeighbor;
         },
 
         checkAvailability: function(clickedX, clickedY) {
