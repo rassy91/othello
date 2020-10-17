@@ -136,15 +136,15 @@
             let nthGridX = Math.floor(clickedX / self.GRID_SIZE);
             let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
 
-            if (self.checkVacancy(nthGridX, nthGridY) > 0) {
-               return;
-            }
-            if (!self.checkNeighbor(nthGridX, nthGridY)) {
-               return;
-            }
-            if (!self.checkAvailability(nthGridX, nthGridY)) {
-               // return;
-            }
+            // if (self.checkVacancy(nthGridX, nthGridY) > 0) {
+            //    return;
+            // }
+            // if (!self.checkNeighbor(nthGridX, nthGridY)) {
+            //    return;
+            // }
+            // if (!self.checkAvailability(nthGridX, nthGridY)) {
+            //    // return;
+            // }
 
             self.isWhite *= -1;
             color = self.isWhite > 0 ? '#ffffff' : '#000000';
@@ -159,11 +159,9 @@
             let stone = new window.myOthello.Stone(self.ctx, data);
             stone.drawArc(data);
 
-            self.stonePoses.push({
-                instance: stone,
-                isWhite: self.isWhite,
-                pos: [nthGridX, nthGridY]
-            });
+            let obj = self.board[nthGridY][nthGridX];
+            obj.instance = stone;
+            obj.isWhite = self.isWhite;
 
         },
 
