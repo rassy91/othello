@@ -84,12 +84,14 @@
             let dir1 = -1;
             let dir2 = -1;
             let posX, posY;
+            let isWhite = 1;
             let data = {
                 r: self.R
             };
 
             setFirstStone('#ffffff');
             dir1 *= -1;
+            isWhite *= -1;
             setFirstStone('#000000');
 
             function setFirstStone(color) {
@@ -106,7 +108,8 @@
 
                     self.stonePoses.push({
                         instance: stone,
-                        pos: [Math.floor(posX / self.GRID_SIZE), Math.floor(posY / self.GRID_SIZE)]
+                        isWhite: isWhite,
+                        pos: [Math.ceil(posX / self.GRID_SIZE), Math.ceil(posY / self.GRID_SIZE)]
                     });
 
                     dir1 *= -1;
@@ -117,18 +120,11 @@
 
         },
 
-        getPosOnBoard: function(clickedX, clickedY) {
-            const self = this;
-
-            return [Math.floor(clickedX / self.GRID_SIZE), Math.floor(clickedY / self.GRID_SIZE)];
-
-        },
-
         putStone: function(clickedX, clickedY) {
             const self = this;
 
-            let nthGridX = Math.floor(clickedX / self.GRID_SIZE);
-            let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
+            let nthGridX = Math.ceil(clickedX / self.GRID_SIZE);
+            let nthGridY = Math.ceil(clickedY / self.GRID_SIZE);
 
             if (self.checkVacancy(nthGridX, nthGridY) > 0) {
                return;
@@ -136,13 +132,16 @@
             if (!self.checkNeighbor(nthGridX, nthGridY)) {
                return;
             }
+            if (!self.checkAvailability(nthGridX, nthGridY)) {
+               // return;
+            }
 
             self.isWhite *= -1;
             color = self.isWhite > 0 ? '#ffffff' : '#000000';
 
             let data = {
-                x: (self.GRID_SIZE * nthGridX) + (self.GRID_SIZE / 2),
-                y: (self.GRID_SIZE * nthGridY) + (self.GRID_SIZE / 2),
+                x: (self.GRID_SIZE * nthGridX) - (self.GRID_SIZE / 2),
+                y: (self.GRID_SIZE * nthGridY) - (self.GRID_SIZE / 2),
                 r: self.R,
                 color: color
             };
@@ -152,6 +151,7 @@
 
             self.stonePoses.push({
                 instance: stone,
+                isWhite: self.isWhite,
                 pos: [nthGridX, nthGridY]
             });
 
@@ -174,14 +174,14 @@
             let hasNeighbor = false;
 
             let neighbors = [
-                [nthX - 1, nthY],       // 左
-                [nthX - 1, nthY + 1],   // 左上
                 [nthX, nthY + 1],       // 上
                 [nthX + 1, nthY + 1],   // 右上
                 [nthX + 1, nthY],       // 右
                 [nthX + 1, nthY - 1],   // 右下
                 [nthX, nthY - 1],       // 下
-                [nthX - 1, nthY - 1]    // 左下
+                [nthX - 1, nthY - 1],   // 左下
+                [nthX - 1, nthY],       // 左
+                [nthX - 1, nthY + 1]    // 左上
             ];
 
             for (let i = 0, length = self.stonePoses.length; i < length; i++) {
@@ -197,6 +197,81 @@
             }
 
             return hasNeighbor;
+        },
+
+        checkAvailability: function(clickedX, clickedY) {
+            const self = this;
+
+            const MAX_COUNT = 7;
+            let count = 0;
+            let tmpFlag = false;
+            let isAvailable = false;
+
+            // 置ける条件
+            // 左右、上下、斜め45度上に同じ色の石がある かつ その同じ色の石と自身の間に隙間なく別の色の石がある
+
+            // 上    [nthX, nthY + 1],
+            // 右上   [nthX + 1, nthY + 1],
+            // 右    [nthX + 1, nthY],
+            // 右下   [nthX + 1, nthY - 1],
+            // 下    [nthX, nthY - 1],
+            // 左下   [nthX - 1, nthY - 1],
+            // 左    [nthX - 1, nthY],
+            // 左上   [nthX - 1, nthY + 1]
+            // でそれぞれチェックする？
+
+            checkTop();
+
+            // 上チェック
+            function checkTop() {
+
+                count = 0;
+                let tmpFlag = false;
+
+                for (let i = 0, length = self.stonePoses.length; i < length; i++) {
+                    for (let j = 0; j < MAX_COUNT; j++) {
+
+                        if (clickedY - j < 0) {
+                            break;
+                        }
+
+                        // 自身と同列かつ同行に石があり、かつ同じ色の場合（自身に近い位置から判定）
+                        if (self.stonePoses[i].pos[0] === clickedX && self.stonePoses[i].pos[1] === clickedY - j && self.stonePoses[i].isWhite === self.isWhite * -1) {
+
+                            console.log(self.stonePoses[i]);
+
+                            // 自身と同列かつ同行にある同じ色の石から、かつ同じ色の場合（自身に近い位置から判定）
+                            for (let k = 1; k < j; k++) {
+                                if (self.stonePoses[i].pos[1] === clickedY - k && self.stonePoses[i].isWhite === self.isWhite) {
+                                    console.log(self.stonePoses[i]);
+                                    tmpFlag = true;
+                                    isAvailable = true;
+                                    break;
+                                }
+                            }
+
+
+                            // console.log(self.stonePoses[i]);
+                            // tmpFlag = true;
+                            // isAvailable = true;
+                            // break;
+                        }
+
+                    }
+                    if (tmpFlag) {
+                        break;
+                    }
+                }
+
+
+            }
+
+
+
+
+
+
+
 
         }
 

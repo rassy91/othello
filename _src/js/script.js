@@ -13,8 +13,20 @@
         ctx.canvas.width = wrapper.clientWidth;
         ctx.canvas.height = wrapper.clientHeight;
 
-        let color = '#ffffff';
-        let isWhite = 1;
+        let playerData = [
+            {
+                instance: null,
+                data: {
+                    color: 'white'
+                }
+            },
+            {
+                instance: null,
+                data: {
+                    color: 'black'
+                }
+            }
+        ];
 
         const board = new myOthello.BoardManager(ctx);
 
@@ -22,7 +34,6 @@
 
         canvas.addEventListener('click', function(e) {
 
-            // console.log(board.getPosOnBoard(e.offsetX, e.offsetY));
             board.putStone(e.offsetX, e.offsetY);
         });
 
@@ -42,3 +53,18 @@
     });
 
 }());
+
+/**
+ * // TODO 質問
+ *
+ * 1.
+ 「判定する」という英語は何を使ってますか？
+
+ find? judge? decide?
+
+
+ 2.
+ chromeのdevツールでインスタンスに入っているtとはなんの意味、略（？）ですか？インスタンスをログに出すとtとなる？
+ board.startGameの最後でconsole.log(self.stonePoses);すると確認できる
+
+ */
