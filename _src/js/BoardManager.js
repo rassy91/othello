@@ -224,6 +224,7 @@
 
             const MAX_COUNT = (self.LINE_NUMBER - 1) - 1; // ((線の数-1) - 自身が置かれるマス)
             let isPossible = false;
+            let isTmpPossible = false;
             let obj = null;
             let tmpObj = null;
 
@@ -243,7 +244,7 @@
             // ];
             // でそれぞれチェックする？
             checkTop();
-            // checkBottom();
+            checkBottom();
 
 
             return isPossible;
@@ -290,27 +291,43 @@
             }
 
             // 下をチェック
-            // function checkBottom() {
-            //
-            //     for (let i = 1; i < MAX_COUNT; i++) {
-            //
-            //         if (nthY + i > 7) {
-            //             break;
-            //         }
-            //
-            //         obj = self.board[nthY + i][nthX];
-            //
-            //         if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
-            //             console.log('下');
-            //             console.log(obj);
-            //             console.log(i);
-            //
-            //             isPossible = true;
-            //             break;
-            //         }
-            //     }
-            //
-            // }
+            function checkBottom() {
+
+                for (let i = 1; i < MAX_COUNT; i++) {
+
+                    if (nthY + i > 7) {
+                        break;
+                    }
+
+                    obj = self.board[nthY + i][nthX];
+
+                    if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
+
+                        for (let j = 1; j < i; j++) {
+                            tmpObj = self.board[nthY + j][nthX];
+                            tmpObj.y = nthY + j;
+                            tmpObj.x = nthX;
+
+                            if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
+
+                                isPossible = true;
+                                self.turnStones.push(tmpObj);
+
+                            } else {
+
+                                isPossible = false;
+                                self.turnStones.length = 0;
+
+                                break;
+                            }
+                        }
+
+                        if (isPossible) {
+                            break;
+                        }
+                    }
+                }
+            }
 
 
 
