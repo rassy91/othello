@@ -4,6 +4,8 @@
         const self = this;
 
         self.ctx = ctx;
+        self.cautionText = document.getElementById('caution');
+
 
         self.GRID_SIZE = 50;
         self.LINE_NUMBER = 9;
@@ -130,6 +132,16 @@
             }
         },
 
+        validate: function() {
+            const self = this;
+
+            if (!self.cautionText.classList.contains('isVisible')) {
+                self.cautionText.classList.add('isVisible');
+                setTimeout(function() {
+                    self.cautionText.classList.remove('isVisible');
+                }, 1000)
+            }
+        },
 
         putStone: function(clickedX, clickedY) {
             const self = this;
@@ -138,12 +150,18 @@
             let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
 
             if (!self.checkVacancy(nthGridX, nthGridY)) {
+
+                self.validate();
                 return;
             }
             if (!self.checkNeighbor(nthGridX, nthGridY)) {
+
+                self.validate();
                 return;
             }
             if (!self.checkIfPossible(nthGridX, nthGridY)) {
+
+                self.validate();
                 return;
             }
 
