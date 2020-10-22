@@ -31,6 +31,10 @@
         // ひっくり返す石を一時的に格納する
         self.turnStones = [];
 
+        //
+        self.toggleCautionClassName = 'isVisible';
+        self.toggleTextClassName = 'js-isWhite';
+
         self.init();
     };
 
@@ -196,10 +200,10 @@
         showCaution: function() {
             const self = this;
 
-            if (!self.cautionText.classList.contains('isVisible')) {
-                self.cautionText.classList.add('isVisible');
+            if (!self.cautionText.classList.contains(self.toggleCautionClassName)) {
+                self.cautionText.classList.add(self.toggleCautionClassName);
                 setTimeout(function() {
-                    self.cautionText.classList.remove('isVisible');
+                    self.cautionText.classList.remove(self.toggleCautionClassName);
                 }, 1000)
             }
         },
@@ -273,12 +277,12 @@
             }
 
             // どちらの番かの表示を切り替え
-            if (!self.stoneColorText.classList.contains('js-isWhite')) {
+            if (!self.stoneColorText.classList.contains(self.toggleTextClassName)) {
                 self.stoneColorText.textContent = '白';
-                self.stoneColorText.classList.add('js-isWhite');
+                self.stoneColorText.classList.add(self.toggleTextClassName);
             } else {
                 self.stoneColorText.textContent = '黒';
-                self.stoneColorText.classList.remove('js-isWhite');
+                self.stoneColorText.classList.remove(self.toggleTextClassName);
             }
 
         },
