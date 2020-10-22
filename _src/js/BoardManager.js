@@ -4,8 +4,10 @@
         const self = this;
 
         self.ctx = ctx;
-        self.cautionText = document.getElementById('caution');
 
+        // DOM
+        self.cautionText = document.getElementById('caution');
+        self.stoneColorText = document.getElementById('stoneColor');
 
         self.GRID_SIZE = 50;
         self.LINE_NUMBER = 9;
@@ -191,7 +193,13 @@
                 self.turnStones.length = 0;
             }
 
-            console.log(self.board);
+            if (!self.stoneColorText.classList.contains('js-isWhite')) {
+                self.stoneColorText.textContent = '白';
+                self.stoneColorText.classList.add('js-isWhite');
+            } else {
+                self.stoneColorText.textContent = '黒';
+                self.stoneColorText.classList.remove('js-isWhite');
+            }
 
         },
 
