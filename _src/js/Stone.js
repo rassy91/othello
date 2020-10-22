@@ -1,5 +1,11 @@
 ;(function() {
 
+    /**
+     * それぞれの石の情報
+     * @param {object} ctx
+     * @param {object} data : 位置と色を保持
+     * @constructor
+     */
     const Stone = function(ctx, data) {
         const self = this;
 
@@ -11,6 +17,10 @@
 
     Stone.prototype = {
 
+        /**
+         * 石を描写
+         * @param {object} data
+         */
         drawArc: function(data) {
             const self = this;
 
@@ -22,6 +32,9 @@
 
         },
 
+        /**
+         * ひっくり返す処理
+         */
         reverse: function() {
             const self = this;
 

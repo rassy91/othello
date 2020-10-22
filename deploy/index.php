@@ -9,7 +9,7 @@
 </head>
 <body class="othello">
 
-<div id="wrapper" class="wrapper">
+<div id="canvasWrapper" class="canvasWrapper">
     <canvas id="canvas" class="canvas"></canvas>
 </div>
 <p class="stoneColorWrap"><span id="stoneColor" class="stoneColor">黒</span>の番</p>

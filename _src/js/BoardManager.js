@@ -1,5 +1,11 @@
 ;(function() {
 
+    /**
+     * コンストラクタ
+     * ボードの状態を管理する
+     * @param {object} ctx
+     * @constructor
+     */
     const BoardManager = function(ctx) {
         const self = this;
 
@@ -9,15 +15,20 @@
         self.cautionText = document.getElementById('caution');
         self.stoneColorText = document.getElementById('stoneColor');
 
+        //値
         self.GRID_SIZE = 50;
         self.LINE_NUMBER = 9;
+        // 石の半径
         self.R = self.GRID_SIZE * 0.3;
 
-        self.color = '#ffffff';
+        // 白黒判定フラグ
+        // 1で白、-1で黒
         self.isWhite = 1;
 
+        // それぞれのマス目の情報を格納
         self.board = [];
 
+        // ひっくり返す石を一時的に格納する
         self.turnStones = [];
 
         self.init();
@@ -26,7 +37,7 @@
     BoardManager.prototype = {
 
         /**
-         *
+         * 初期化
          */
         init: function() {
             const self = this;
@@ -34,8 +45,10 @@
             // x=0, y=0で先の太さが半分し描写されないため、基準点をずらす
             self.ctx.translate(1, 1);
 
+            // ボードを描写
             self.drawBoard();
 
+            // 各マス目に情報保持用のオブジェクトをもたせてボード情報の配列に格納
             for (let i = 1; i < self.LINE_NUMBER; i++) {
                 let row = [];
 
@@ -48,6 +61,9 @@
 
         },
 
+        /**
+         * ボードを描写
+         */
         drawBoard: function() {
             const self = this;
 
@@ -69,6 +85,14 @@
 
         },
 
+        /**
+         * 四角形を描写
+         * @param {number} x1
+         * @param {number} y1
+         * @param {number} x2
+         * @param {number} y2
+         * @param {string} color
+         */
         drawRect: function(x1, y1, x2, y2, color) {
             const self = this;
 
@@ -77,6 +101,15 @@
 
         },
 
+        /**
+         * 線を描写
+         * @param {number} x1
+         * @param {number} y1
+         * @param {number} x2
+         * @param {number} y2
+         * @param {string} color
+         * @param {number} width
+         */
         drawLine: function(x1, y1, x2, y2, color, width) {
             const self = this;
 
@@ -92,6 +125,9 @@
 
         },
 
+        /**
+         * ゲームスタート時に実行
+         */
         startGame: function() {
             const self = this;
 
@@ -107,8 +143,13 @@
             isWhite *= -1;
             setFirstStone();
 
-            function setFirstStone(color) {
+            /**
+             * 初期位置に石をセット
+             */
+            function setFirstStone() {
                 for (let i = 0; i < 2; i++) {
+
+                    // TODO 自分用メモ：関数の外側で定義しており、オブジェクトの参照渡しで引っかかった
                     let data = {
                         r: self.R
                     };
@@ -120,9 +161,12 @@
                     data.y = posY;
                     data.isWhite = isWhite;
 
+                    // インスタンスを作成
                     let stone = new window.myOthello.Stone(self.ctx, data);
+                    // 石を描写
                     stone.drawArc(data);
 
+                    // ボードの配列の該当位置にインスタンスと現在の白黒状態を格納
                     let obj = self.board[Math.floor(posY / self.GRID_SIZE)][Math.floor(posX / self.GRID_SIZE)];
                     obj.instance = stone;
                     obj.isWhite = isWhite;
@@ -134,7 +178,10 @@
             }
         },
 
-        validate: function() {
+        /**
+         * 石を置けない位置の場合、注意書きを表示する
+         */
+        showCaution: function() {
             const self = this;
 
             if (!self.cautionText.classList.contains('isVisible')) {
@@ -145,28 +192,46 @@
             }
         },
 
+        /**
+         * 石を置く処理
+         * @param {number} clickedX : canvas上のクリック位置
+         * @param {number} clickedY : canvas上のクリック位置
+         */
         putStone: function(clickedX, clickedY) {
             const self = this;
 
+            // 何番目のマスか
             let nthGridX = Math.floor(clickedX / self.GRID_SIZE);
             let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
 
+            // 石が置けるかの判定
             if (!self.checkVacancy(nthGridX, nthGridY)) {
-                self.validate();
+                // クリックしたマスが空かどうか
+
+                // 石を置けない位置の場合、注意書きを表示する
+                self.showCaution();
                 return;
-            }
-            if (!self.checkNeighbor(nthGridX, nthGridY)) {
-                self.validate();
+
+            } else if (!self.checkNeighbor(nthGridX, nthGridY)) {
+                // クリックしたマスが石にとなり合っているかどうか
+
+                // 石を置けない位置の場合、注意書きを表示する
+                self.showCaution();
                 return;
-            }
-            if (!self.checkIfPossible(nthGridX, nthGridY)) {
-                self.validate();
+
+            } else if (!self.checkIfPossible(nthGridX, nthGridY)) {
+                // クリックしたマスが石をひっくり返せるマスかどうか
+
+                // 石を置けない位置の場合、注意書きを表示する
+                self.showCaution();
                 return;
+
             }
 
+            // 石を置けた場合、色を反転
             self.isWhite *= -1;
-            color = self.isWhite > 0 ? '#ffffff' : '#000000';
 
+            // インスタンスに渡す情報
             let data = {
                 x: (self.GRID_SIZE * nthGridX) + (self.GRID_SIZE / 2),
                 y: (self.GRID_SIZE * nthGridY) + (self.GRID_SIZE / 2),
@@ -174,15 +239,18 @@
                 isWhite: self.isWhite
             };
 
+            // インスタンスを作成
             let stone = new window.myOthello.Stone(self.ctx, data);
             stone.drawArc(data);
 
+            // 可読性のため、いったん変数に該当オブジェクトを格納
             let obj = self.board[nthGridY][nthGridX];
             obj.instance = stone;
             obj.isWhite = self.isWhite;
             obj.x = nthGridX;
             obj.y = nthGridY;
 
+            // ひっくり返す石がある場合はひっくり返す
             if (self.turnStones.length > 0) {
                 self.turnStones.forEach(function(val) {
                     val.isWhite *= -1;
@@ -192,6 +260,7 @@
                 self.turnStones.length = 0;
             }
 
+            // どちらの番かの表示を切り替え
             if (!self.stoneColorText.classList.contains('js-isWhite')) {
                 self.stoneColorText.textContent = '白';
                 self.stoneColorText.classList.add('js-isWhite');
@@ -202,6 +271,12 @@
 
         },
 
+        /**
+         * クリックしたマスが空かどうかを判定
+         * @param {number} nthX : 何番目のマスか（1-8）
+         * @param {number} nthY : 何番目のマスか（1-8）
+         * @returns {boolean}
+         */
         checkVacancy: function(nthX, nthY) {
             const self = this;
 
@@ -209,6 +284,12 @@
 
         },
 
+        /**
+         * クリックしたマスが石にとなり合っているかどうかを判定
+         * @param {number} nthX : 何番目のマスか（1-8）
+         * @param {number} nthY : 何番目のマスか（1-8）
+         * @returns {boolean}
+         */
         checkNeighbor: function(nthX, nthY) {
             const self = this;
 
@@ -227,10 +308,11 @@
 
             for (let i = 0, len = neighbors.length; i < len; i++) {
 
-                line = neighbors[i][1];
                 row = neighbors[i][0];
+                line = neighbors[i][1];
 
-                if (line < 0 || line > 7 || row < 0 || row > 7) {
+                // ボードからはみ出すときはスキップ
+                if (row < 0 || row > 7 || line < 0 || line > 7) {
                     continue;
                 }
 
@@ -241,9 +323,16 @@
 
         },
 
+        /**
+         * クリックしたマスが石をひっくり返せるマスかどうかを判定
+         * @param {number} nthX
+         * @param {number} nthY
+         * @returns {boolean}
+         */
         checkIfPossible: function(nthX, nthY) {
             const self = this;
 
+            // TODO 自分用メモ：　三角関数を使うと以下判定しやすそうだが Math.cos(Math.PI / 2)で1にならない
             // for (let i = 0; i < 8; i++) {
             //     console.log(i + ' / 4');
             //     console.log(Math.cos(Math.PI / 4 * i), Math.sin(Math.PI / 4 * i));
@@ -260,17 +349,7 @@
             // 左右、上下、斜め45度上に同じ色の石がある
             // かつ その同じ色の石と自身の間に隙間なく別の色の石がある
 
-            // let neighbors = [
-            //     [nthX, nthY - 1],       // 上
-            //     [nthX + 1, nthY - 1],   // 右上
-            //     [nthX + 1, nthY],       // 右
-            //     [nthX + 1, nthY + 1],   // 右下
-            //     [nthX, nthY + 1],       // 下
-            //     [nthX - 1, nthY + 1],   // 左下
-            //     [nthX - 1, nthY],       // 左
-            //     [nthX - 1, nthY - 1]    // 左上
-            // ];
-            // でそれぞれチェックする？
+            // 上、右上、右、右下、下、左下、左、左上、でそれぞれチェックする
             isTmpPossible = false;
             checkTop();
 
@@ -296,7 +375,6 @@
             checkRightTop();
 
             return isPossible;
-
 
             // 上をチェック
             function checkTop() {
