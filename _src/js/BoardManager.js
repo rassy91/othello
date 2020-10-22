@@ -338,10 +338,15 @@
             //     console.log(Math.cos(Math.PI / 4 * i), Math.sin(Math.PI / 4 * i));
             // }
 
+
             const MAX_COUNT = (self.LINE_NUMBER - 1) - 1; // ((線の数-1) - 自身が置かれるマス)
+            // 一方向でも石がひっくり返せればtrueにする
             let isPossible = false;
+            // 各方向で石をひっくり返せるかをチェックするフラグ
             let isTmpPossible;
+            // チェックする石の情報を格納（クリックした位置から近い箇所からチェック）
             let obj = null;
+            //
             let tmpObj = null;
             let tmpTurnStones = [];
 
@@ -388,23 +393,30 @@
                     // 自身から該当方向の中で一番近い石
                     obj = self.board[nthY - i][nthX];
 
+                    // チェックする方向に情報があり＝石が置かれており、かつ、同じ色の場合
                     if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
 
+                        // クリックした位置から、上記石の場所までの石を確認
                         for (let j = 1; j < i; j++) {
+                            // TODO 自分用メモ：self.board[y][x]をtmpObjに参照渡ししていてハマった
                             tmpObj = self.board[nthY - j][nthX];
                             tmpObj.y = nthY - j;
                             tmpObj.x = nthX;
 
+
                             if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
+                                // チェックする方向に情報があり＝石が置かれており、かつ、違う色の場合
 
                                 isTmpPossible = true;
                                 tmpTurnStones.push(tmpObj);
 
                             } else {
+                                // 石がないか同じ色の場合は処理を抜ける
 
                                 isTmpPossible = false;
                                 tmpTurnStones.length = 0;
 
+                                // 処理終了の場合はオブジェクトに一時的に格納していた情報を削除する
                                 delete tmpObj.x;
                                 delete tmpObj.y;
 
@@ -412,6 +424,7 @@
                             }
                         }
 
+                        // クリックした位置とチェックする方向の最短の同じ色の石までの間がすべて違う色の石の場合
                         if (isTmpPossible) {
 
                             for (let i = 0, length = tmpTurnStones.length; i < length; i++) {
