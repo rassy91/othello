@@ -14,6 +14,8 @@
 
         self.board = [];
 
+        self.turnStones = [];
+
         self.init();
     };
 
@@ -95,23 +97,24 @@
             let dir2 = -1;
             let posX, posY;
             let isWhite = 1;
-            let data = {
-                r: self.R
-            };
 
-            setFirstStone('#ffffff');
+            setFirstStone();
             dir1 *= -1;
             isWhite *= -1;
-            setFirstStone('#000000');
+            setFirstStone();
 
             function setFirstStone(color) {
                 for (let i = 0; i < 2; i++) {
+                    let data = {
+                        r: self.R
+                    };
+
                     posX = center + dir1 * diff;
                     posY = center + dir2 * diff;
 
                     data.x = posX;
                     data.y = posY;
-                    data.color = color;
+                    data.isWhite = isWhite;
 
                     let stone = new window.myOthello.Stone(self.ctx, data);
                     stone.drawArc(data);
@@ -140,9 +143,9 @@
             if (!self.checkNeighbor(nthGridX, nthGridY)) {
                 return;
             }
-            // if (!self.checkAvailability(nthGridX, nthGridY)) {
-            //    // return;
-            // }
+            if (!self.checkIfPossible(nthGridX, nthGridY)) {
+                return;
+            }
 
             self.isWhite *= -1;
             color = self.isWhite > 0 ? '#ffffff' : '#000000';
@@ -151,7 +154,7 @@
                 x: (self.GRID_SIZE * nthGridX) + (self.GRID_SIZE / 2),
                 y: (self.GRID_SIZE * nthGridY) + (self.GRID_SIZE / 2),
                 r: self.R,
-                color: color
+                isWhite: self.isWhite
             };
 
             let stone = new window.myOthello.Stone(self.ctx, data);
@@ -160,6 +163,15 @@
             let obj = self.board[nthGridY][nthGridX];
             obj.instance = stone;
             obj.isWhite = self.isWhite;
+
+            if (self.turnStones.length > 0) {
+                self.turnStones.forEach(function(val) {
+                    val.isWhite *= -1;
+                    val.instance.reverse();
+                });
+
+                self.turnStones.length = 0;
+            }
 
         },
 
@@ -176,14 +188,14 @@
             let row, line;
 
             let neighbors = [
-                [nthX, nthY + 1],       // 上
-                [nthX + 1, nthY + 1],   // 右上
+                [nthX, nthY - 1],       // 上
+                [nthX + 1, nthY - 1],   // 右上
                 [nthX + 1, nthY],       // 右
-                [nthX + 1, nthY - 1],   // 右下
-                [nthX, nthY - 1],       // 下
-                [nthX - 1, nthY - 1],   // 左下
+                [nthX + 1, nthY + 1],   // 右下
+                [nthX, nthY + 1],       // 下
+                [nthX - 1, nthY + 1],   // 左下
                 [nthX - 1, nthY],       // 左
-                [nthX - 1, nthY + 1]    // 左上
+                [nthX - 1, nthY - 1]    // 左上
             ];
 
             for (let i = 0, len = neighbors.length; i < len; i++) {
@@ -202,74 +214,103 @@
 
         },
 
-        checkAvailability: function(clickedX, clickedY) {
+        checkIfPossible: function(nthX, nthY) {
             const self = this;
 
-            const MAX_COUNT = 7;
-            let count = 0;
-            let tmpFlag = false;
-            let isAvailable = false;
+            // for (let i = 0; i < 8; i++) {
+            //     console.log(i + ' / 4');
+            //     console.log(Math.cos(Math.PI / 4 * i), Math.sin(Math.PI / 4 * i));
+            // }
+
+            const MAX_COUNT = (self.LINE_NUMBER - 1) - 1; // ((線の数-1) - 自身が置かれるマス)
+            let isPossible = false;
+            let obj = null;
+            let tmpObj = null;
 
             // 置ける条件
-            // 左右、上下、斜め45度上に同じ色の石がある かつ その同じ色の石と自身の間に隙間なく別の色の石がある
+            // 左右、上下、斜め45度上に同じ色の石がある
+            // かつ その同じ色の石と自身の間に隙間なく別の色の石がある
 
-            // 上    [nthX, nthY + 1],
-            // 右上   [nthX + 1, nthY + 1],
-            // 右    [nthX + 1, nthY],
-            // 右下   [nthX + 1, nthY - 1],
-            // 下    [nthX, nthY - 1],
-            // 左下   [nthX - 1, nthY - 1],
-            // 左    [nthX - 1, nthY],
-            // 左上   [nthX - 1, nthY + 1]
+            // let neighbors = [
+            //     [nthX, nthY - 1],       // 上
+            //     [nthX + 1, nthY - 1],   // 右上
+            //     [nthX + 1, nthY],       // 右
+            //     [nthX + 1, nthY + 1],   // 右下
+            //     [nthX, nthY + 1],       // 下
+            //     [nthX - 1, nthY + 1],   // 左下
+            //     [nthX - 1, nthY],       // 左
+            //     [nthX - 1, nthY - 1]    // 左上
+            // ];
             // でそれぞれチェックする？
-
             checkTop();
+            // checkBottom();
 
-            // 上チェック
+
+            return isPossible;
+
+
+            // 上をチェック
             function checkTop() {
 
-                count = 0;
-                let tmpFlag = false;
+                for (let i = 1; i < MAX_COUNT; i++) {
 
-                for (let i = 0, length = self.stonePoses.length; i < length; i++) {
-                    for (let j = 0; j < MAX_COUNT; j++) {
-
-                        if (clickedY - j < 0) {
-                            break;
-                        }
-
-                        // 自身と同列かつ同行に石があり、かつ同じ色の場合（自身に近い位置から判定）
-                        if (self.stonePoses[i].pos[0] === clickedX && self.stonePoses[i].pos[1] === clickedY - j && self.stonePoses[i].isWhite === self.isWhite * -1) {
-
-                            console.log(self.stonePoses[i]);
-
-                            // 自身と同列かつ同行にある同じ色の石から、かつ同じ色の場合（自身に近い位置から判定）
-                            for (let k = 1; k < j; k++) {
-                                if (self.stonePoses[i].pos[1] === clickedY - k && self.stonePoses[i].isWhite === self.isWhite) {
-                                    console.log(self.stonePoses[i]);
-                                    tmpFlag = true;
-                                    isAvailable = true;
-                                    break;
-                                }
-                            }
-
-
-                            // console.log(self.stonePoses[i]);
-                            // tmpFlag = true;
-                            // isAvailable = true;
-                            // break;
-                        }
-
-                    }
-                    if (tmpFlag) {
+                    if (nthY - i < 0) {
                         break;
                     }
+
+                    // 自身から該当方向の中で一番近い石
+                    obj = self.board[nthY - i][nthX];
+
+                    if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
+
+                        for (let j = 1; j < i; j++) {
+                            tmpObj = self.board[nthY - j][nthX];
+                            tmpObj.y = nthY - j;
+                            tmpObj.x = nthX;
+
+                            if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
+
+                                isPossible = true;
+                                self.turnStones.push(tmpObj);
+
+                            } else {
+
+                                isPossible = false;
+                                self.turnStones.length = 0;
+
+                                break;
+                            }
+                        }
+
+                        if (isPossible) {
+                            break;
+                        }
+                    }
                 }
-
-
             }
 
-
+            // 下をチェック
+            // function checkBottom() {
+            //
+            //     for (let i = 1; i < MAX_COUNT; i++) {
+            //
+            //         if (nthY + i > 7) {
+            //             break;
+            //         }
+            //
+            //         obj = self.board[nthY + i][nthX];
+            //
+            //         if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
+            //             console.log('下');
+            //             console.log(obj);
+            //             console.log(i);
+            //
+            //             isPossible = true;
+            //             break;
+            //         }
+            //     }
+            //
+            // }
 
 
 
