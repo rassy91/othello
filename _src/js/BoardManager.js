@@ -245,6 +245,7 @@
             let isTmpPossible = false;
             let obj = null;
             let tmpObj = null;
+            let tmpTurnStones = [];
 
             // 置ける条件
             // 左右、上下、斜め45度上に同じ色の石がある
@@ -289,19 +290,25 @@
 
                             if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
 
-                                isPossible = true;
-                                self.turnStones.push(tmpObj);
+                                isTmpPossible = true;
+                                tmpTurnStones.push(tmpObj);
 
                             } else {
 
-                                isPossible = false;
-                                self.turnStones.length = 0;
+                                isTmpPossible = false;
+                                tmpTurnStones.length = 0;
 
                                 break;
                             }
                         }
 
-                        if (isPossible) {
+                        if (isTmpPossible) {
+
+                            for (let i = 0, length = tmpTurnStones.length; i < length; i++) {
+                                self.turnStones.push(tmpTurnStones[i]);
+                            }
+                            tmpTurnStones.length = 0;
+                            isPossible = true;
                             break;
                         }
                     }
@@ -328,19 +335,25 @@
 
                             if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
 
-                                isPossible = true;
-                                self.turnStones.push(tmpObj);
+                                isTmpPossible = true;
+                                tmpTurnStones.push(tmpObj);
 
                             } else {
 
-                                isPossible = false;
-                                self.turnStones.length = 0;
+                                isTmpPossible = false;
+                                tmpTurnStones.length = 0;
 
                                 break;
                             }
                         }
 
-                        if (isPossible) {
+                        if (isTmpPossible) {
+
+                            for (let i = 0, length = tmpTurnStones.length; i < length; i++) {
+                                self.turnStones.push(tmpTurnStones[i]);
+                            }
+                            tmpTurnStones.length = 0;
+                            isPossible = true;
                             break;
                         }
                     }
