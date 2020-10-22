@@ -152,17 +152,14 @@
             let nthGridY = Math.floor(clickedY / self.GRID_SIZE);
 
             if (!self.checkVacancy(nthGridX, nthGridY)) {
-
                 self.validate();
                 return;
             }
             if (!self.checkNeighbor(nthGridX, nthGridY)) {
-
                 self.validate();
                 return;
             }
             if (!self.checkIfPossible(nthGridX, nthGridY)) {
-
                 self.validate();
                 return;
             }
@@ -183,6 +180,8 @@
             let obj = self.board[nthGridY][nthGridX];
             obj.instance = stone;
             obj.isWhite = self.isWhite;
+            obj.x = nthGridX;
+            obj.y = nthGridY;
 
             if (self.turnStones.length > 0) {
                 self.turnStones.forEach(function(val) {
@@ -252,7 +251,7 @@
 
             const MAX_COUNT = (self.LINE_NUMBER - 1) - 1; // ((線の数-1) - 自身が置かれるマス)
             let isPossible = false;
-            let isTmpPossible = false;
+            let isTmpPossible;
             let obj = null;
             let tmpObj = null;
             let tmpTurnStones = [];
@@ -272,11 +271,29 @@
             //     [nthX - 1, nthY - 1]    // 左上
             // ];
             // でそれぞれチェックする？
+            isTmpPossible = false;
             checkTop();
+
+            isTmpPossible = false;
             checkBottom();
+
+            isTmpPossible = false;
             checkLeft();
+
+            isTmpPossible = false;
             checkRight();
 
+            isTmpPossible = false;
+            checkLeftTop();
+
+            isTmpPossible = false;
+            checkRightBottom();
+
+            isTmpPossible = false;
+            checkLeftBottom();
+
+            isTmpPossible = false;
+            checkRightTop();
 
             return isPossible;
 
@@ -284,7 +301,7 @@
             // 上をチェック
             function checkTop() {
 
-                for (let i = 1; i < MAX_COUNT; i++) {
+                for (let i = 1; i <= MAX_COUNT; i++) {
 
                     if (nthY - i < 0) {
                         break;
@@ -310,6 +327,9 @@
                                 isTmpPossible = false;
                                 tmpTurnStones.length = 0;
 
+                                delete tmpObj.x;
+                                delete tmpObj.y;
+
                                 break;
                             }
                         }
@@ -330,7 +350,7 @@
             // 下をチェック
             function checkBottom() {
 
-                for (let i = 1; i < MAX_COUNT; i++) {
+                for (let i = 1; i <= MAX_COUNT; i++) {
 
                     if (nthY + i > 7) {
                         break;
@@ -341,6 +361,7 @@
                     if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
 
                         for (let j = 1; j < i; j++) {
+
                             tmpObj = self.board[nthY + j][nthX];
                             tmpObj.y = nthY + j;
                             tmpObj.x = nthX;
@@ -355,6 +376,9 @@
                                 isTmpPossible = false;
                                 tmpTurnStones.length = 0;
 
+                                delete tmpObj.x;
+                                delete tmpObj.y;
+
                                 break;
                             }
                         }
@@ -366,6 +390,7 @@
                             }
                             tmpTurnStones.length = 0;
                             isPossible = true;
+
                             break;
                         }
                     }
@@ -376,7 +401,7 @@
             // 左をチェック
             function checkLeft() {
 
-                for (let i = 1; i < MAX_COUNT; i++) {
+                for (let i = 1; i <= MAX_COUNT; i++) {
 
                     if (nthX - i < 0) {
                         break;
@@ -402,6 +427,9 @@
                                 isTmpPossible = false;
                                 tmpTurnStones.length = 0;
 
+                                delete tmpObj.x;
+                                delete tmpObj.y;
+
                                 break;
                             }
                         }
@@ -421,7 +449,7 @@
             // 右をチェック
             function checkRight() {
 
-                for (let i = 1; i < MAX_COUNT; i++) {
+                for (let i = 1; i <= MAX_COUNT; i++) {
 
                     if (nthX + i > 7) {
                         break;
@@ -447,6 +475,9 @@
                                 isTmpPossible = false;
                                 tmpTurnStones.length = 0;
 
+                                delete tmpObj.x;
+                                delete tmpObj.y;
+
                                 break;
                             }
                         }
@@ -464,7 +495,202 @@
                 }
             }
 
+            // 左上をチェック
+            function checkLeftTop() {
 
+                for (let i = 1; i <= MAX_COUNT; i++) {
+
+                    if (nthY - i < 0 || nthX - i < 0) {
+                        break;
+                    }
+
+                    // 自身から該当方向の中で一番近い石
+                    obj = self.board[nthY - i][nthX - i];
+
+                    if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
+
+                        for (let j = 1; j < i; j++) {
+                            tmpObj = self.board[nthY - j][nthX - j];
+                            tmpObj.y = nthY - j;
+                            tmpObj.x = nthX - j;
+
+                            if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
+
+                                isTmpPossible = true;
+                                tmpTurnStones.push(tmpObj);
+
+                            } else {
+
+                                isTmpPossible = false;
+                                tmpTurnStones.length = 0;
+
+                                delete tmpObj.x;
+                                delete tmpObj.y;
+
+                                break;
+                            }
+                        }
+
+                        if (isTmpPossible) {
+
+                            for (let i = 0, length = tmpTurnStones.length; i < length; i++) {
+                                self.turnStones.push(tmpTurnStones[i]);
+                            }
+                            tmpTurnStones.length = 0;
+                            isPossible = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 右下をチェック
+            function checkRightBottom() {
+
+                for (let i = 1; i <= MAX_COUNT; i++) {
+
+                    if (nthY + i > 7 || nthX + i > 7) {
+                        break;
+                    }
+
+                    // 自身から該当方向の中で一番近い石
+                    obj = self.board[nthY + i][nthX + i];
+
+                    if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
+
+                        for (let j = 1; j < i; j++) {
+                            tmpObj = self.board[nthY + j][nthX + j];
+                            tmpObj.y = nthY + j;
+                            tmpObj.x = nthX + j;
+
+                            if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
+
+                                isTmpPossible = true;
+                                tmpTurnStones.push(tmpObj);
+
+                            } else {
+
+                                isTmpPossible = false;
+                                tmpTurnStones.length = 0;
+
+                                delete tmpObj.x;
+                                delete tmpObj.y;
+
+                                break;
+                            }
+                        }
+
+                        if (isTmpPossible) {
+
+                            for (let i = 0, length = tmpTurnStones.length; i < length; i++) {
+                                self.turnStones.push(tmpTurnStones[i]);
+                            }
+
+                            tmpTurnStones.length = 0;
+                            isPossible = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 左下をチェック
+            function checkLeftBottom() {
+
+                for (let i = 1; i <= MAX_COUNT; i++) {
+
+                    if (nthY + i > 7 || nthX - i < 0) {
+                        break;
+                    }
+
+                    // 自身から該当方向の中で一番近い石
+                    obj = self.board[nthY + i][nthX - i];
+
+                    if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
+
+                        for (let j = 1; j < i; j++) {
+                            tmpObj = self.board[nthY + j][nthX - j];
+                            tmpObj.y = nthY + j;
+                            tmpObj.x = nthX - j;
+
+                            if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
+
+                                isTmpPossible = true;
+                                tmpTurnStones.push(tmpObj);
+
+                            } else {
+
+                                isTmpPossible = false;
+                                tmpTurnStones.length = 0;
+
+                                delete tmpObj.x;
+                                delete tmpObj.y;
+
+                                break;
+                            }
+                        }
+
+                        if (isTmpPossible) {
+
+                            for (let i = 0, length = tmpTurnStones.length; i < length; i++) {
+                                self.turnStones.push(tmpTurnStones[i]);
+                            }
+                            tmpTurnStones.length = 0;
+                            isPossible = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 右上をチェック
+            function checkRightTop() {
+
+                for (let i = 1; i <= MAX_COUNT; i++) {
+
+                    if (nthY - i < 0 || nthX + i > 7) {
+                        break;
+                    }
+
+                    // 自身から該当方向の中で一番近い石
+                    obj = self.board[nthY - i][nthX + i];
+
+                    if ((Object.keys(obj).length > 0) && (obj.isWhite * -1 === self.isWhite)) {
+
+                        for (let j = 1; j < i; j++) {
+                            tmpObj = self.board[nthY - j][nthX + j];
+                            tmpObj.y = nthY - j;
+                            tmpObj.x = nthX + j;
+
+                            if (Object.keys(tmpObj).length > 0 && tmpObj.isWhite === self.isWhite) {
+
+                                isTmpPossible = true;
+                                tmpTurnStones.push(tmpObj);
+
+                            } else {
+
+                                isTmpPossible = false;
+                                tmpTurnStones.length = 0;
+
+                                delete tmpObj.x;
+                                delete tmpObj.y;
+
+                                break;
+                            }
+                        }
+
+                        if (isTmpPossible) {
+
+                            for (let i = 0, length = tmpTurnStones.length; i < length; i++) {
+                                self.turnStones.push(tmpTurnStones[i]);
+                            }
+                            tmpTurnStones.length = 0;
+                            isPossible = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
 
         }
