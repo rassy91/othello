@@ -27,11 +27,8 @@
 
             self.isWhite *= -1;
 
-            self.ctx.beginPath();
-            self.ctx.arc(self.data.x, self.data.y, self.data.r, 0, Math.PI * 2, true);
-            self.ctx.fillStyle = self.isWhite > 0 ? '#ffffff' : '#000000';
-            self.ctx.fill();
-            self.ctx.closePath();
+            self.drawArc(self.data);
+
         }
     };
 
