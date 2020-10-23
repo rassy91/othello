@@ -43,11 +43,11 @@ gulp.task('js', () => {
     return gulp.src(config.jsSrc, {sourcemaps: isDevelop})
         .pipe(plumber())
         .pipe(concat(config.scriptName))
-        .pipe(minify({
-            mangle: {
-                safari10: true
-            }
-        }))
+        // .pipe(minify({
+        //     mangle: {
+        //         safari10: true
+        //     }
+        // }))
         .pipe(gulp.dest(deployDir + 'js', {sourcemaps: isDevelop}));
 });
 
