@@ -34,6 +34,7 @@ function css() {
 }
 
 // JavaScript
+const gulp_babel = require("gulp-babel");
 const gulp_concat = require('gulp-concat');
 const gulp_terser = require('gulp-terser');
 function js() {
@@ -41,6 +42,9 @@ function js() {
         .src(config.jsSrc, {sourcemaps: isDevelop})
         .pipe(gulp_plumber({
             errorHandler: gulp_notify.onError('Error: <%= error.message %>')
+        }))
+        .pipe(gulp_babel({
+            presets: ['@babel/preset-env']  // gulp-babelでトランスパイル
         }))
         .pipe(gulp_plumber())
         .pipe(gulp_concat(config.scriptName))
