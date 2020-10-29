@@ -1,0 +1,146 @@
+.#{$pageName} {
+    
+    font-size: 62.5%; /*フォントの基準サイズを10pxにする*/
+    -webkit-text-size-adjust: 100%; /*スマホでPC表示した際に勝手に文字が大きくなるのを防ぐ*/
+    
+    * {
+        box-sizing: border-box;
+    }
+    a {
+        margin:0;
+        padding:0;
+        font-size:100%;
+        vertical-align:baseline;
+        background:transparent;
+        text-decoration:none;
+        color: inherit;
+    }
+    img {
+        margin:0;
+        padding:0;
+        border:0;
+        outline:0;
+        font-size:100%;
+        vertical-align:bottom;
+        background:transparent;
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+    picture {
+        display: block;
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    
+    /*--------------------------------
+    formリセット
+    https://qiita.com/takeshisakuma/items/4218822871af486c8469
+     --------------------------------*/
+    input,
+    button,
+    textarea,
+    select {
+        /* デフォルトスタイルをリセット */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        
+        /* font-familyを継承しないので、継承させる */
+        font-family: inherit;
+        
+        /* iOSの角丸をリセット */
+        border-radius: 0;
+        
+        /* box-size */
+        box-sizing: border-box;
+        
+        /* 文字の大きさ iOSでズームさせないために16px以上を指定 */
+        font-size: 16px;
+        
+        /* 文字色を親から継承 */
+        color: inherit;
+    }
+    
+    label {
+        /* iOSでのlabelとinput,select,textareaの関連付け */
+        cursor: pointer;
+    }
+    /*--------------------------------
+    end formリセット
+    https://qiita.com/takeshisakuma/items/4218822871af486c8469
+     --------------------------------*/
+    
+    input,
+    button,
+    textarea,
+    select {
+        &:focus {
+            border: none;
+        }
+    }
+    
+    /* Hides from IE-mac */
+    * html .clearfix {
+        height: 1%;
+    }
+    .clearfix {
+        display: block;
+    }
+    /* End hide from IE-mac */
+    .clear {
+        clear:both;
+    }
+    
+    /* IE11対応 */
+    // mainタグ
+    & {
+        display: block;
+    }
+    
+    button {
+        border: 0;
+        outline: 0;
+    }
+    
+    .pc {
+        @include pc {
+            display: block;
+        }
+        @include sp {
+            display: none;
+        }
+    }
+    .sp {
+        @include pc {
+            display: none;
+        }
+        @include sp {
+            display: block;
+        }
+    }
+    
+    @at-root #wrapper {
+        overflow: hidden;
+        @include pc {
+            min-width: 980px;
+        }
+    }
+    & {
+        position: relative;
+        color: $baseTextColor;
+        background-color: $mainColor;
+    }
+    
+    .inner {
+        margin: 0 auto;
+        @include pc {
+            width: #{$contentsAreaPC}px;
+        }
+        @include sp {
+            width: convertToVw($contentsAreaSP);
+        }
+    }
+}

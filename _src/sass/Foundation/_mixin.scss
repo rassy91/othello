@@ -1,0 +1,78 @@
+// メディアクエリ
+@mixin pc{
+    @media screen and (min-width: #{$breakpoint + 1}px) {
+        @content;
+    }
+    @media print {
+        @content;
+    }
+}
+@mixin sp{
+    @media screen and (max-width: #{$breakpoint}px) {
+        @content;
+    }
+}
+
+//画像をbackgroundで入れる
+@mixin backgroundImage($w, $h, $url) {
+    width: #{$w}px;
+    height: #{$h}px;
+    background: url("#{$imgPath}#{$url}") no-repeat bottom center / contain;
+}
+@mixin backgroundImageSP($url) {
+    background: url("#{$imgPath}#{$url}") no-repeat bottom center / contain;
+}
+
+// テキスト画像差し替え
+@mixin backgroundText($w, $h, $url) {
+    @include backgroundImage($w, $h, $url);
+    text-indent: -9999px;
+}
+
+@mixin backgroundTextSP($url) {
+    @include backgroundImageSP($url);
+    text-indent: -9999px;
+}
+
+// フォントサイズ
+@mixin fontSize($px, $lh:$px) {
+    font-size: #{$px}px;
+    line-height: ($lh / $px);
+}
+@mixin fontSizeSP($px, $lh:$px) {
+    font-size: convertToVw($px);
+    line-height: ($lh / $px);
+}
+
+//疑似要素（絶対配置）
+@mixin pseudoElement {
+    content: '';
+    display: block;
+    position: absolute;
+}
+
+// aタグを親要素と同じ大きさに
+@mixin blockInline {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+@mixin hoverEffect($alpha: 0.7) {
+    &:hover {
+        opacity: $alpha;
+    }
+}
+
+@mixin setBlurEffect() {
+    &::before {
+        @include pseudoElement;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        background: $mainColor;
+        box-shadow: 0 0 10px 10px $mainColor;
+    }
+}

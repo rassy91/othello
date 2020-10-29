@@ -1,0 +1,22 @@
+//sp表示時、pxをvwに変換
+//$valueは単位なし
+@function convertToVw($value){
+    @return $value / $viewport * 100vw;
+}
+
+// 引数を2で割って返す
+@function getHalfValue($val) {
+    @return $val / 2;
+}
+
+@function setHalfValuePx($val) {
+    @return (0px + $val / 2);
+}
+
+// 数値の正規化 ( https://qiita.com/QUANON/items/188baf469fd493a2f1e6 )
+@function normalizeNum($val, $min: 0, $max:1) {
+    @return ($val - $min) / ($max - $min);
+}
+@function denormalizeNum($val, $min: 0, $max:1) {
+    @return $val * ($max - $min) + $min;
+}
